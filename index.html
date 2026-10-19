@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#D5EAE6">
+<title>Tyrano Scenario Studio</title>
+<style>
+:root {
+    --bg: #F5F7F6;
+    --surface: #FFFFFF;
+    --surface-secondary: #F0F5F3;
+    --mint: #D5EAE6;
+    --mint-hover: #BBDCD5;
+    --mint-dark: #719E95;
+    --choco: #7C5B53;
+    --text: #454C49;
+    --text-secondary: #858D89;
+    --border: #E1E8E5;
+    --danger: #C77777;
+    --shadow: 0 5px 24px rgba(56, 83, 75, 0.07);
+    --radius: 12px;
+    --header-height: 58px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans JP", sans-serif;
+    font-size: 13px;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 13px;
+    color: var(--text);
+    background: var(--surface);
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .15s;
+}
+
+button:hover {
+    background: var(--surface-secondary);
+    border-color: var(--mint-dark);
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+button.primary {
+    background: var(--mint);
+    border-color: var(--mint);
+    font-weight: 600;
+}
+
+button.primary:hover {
+    background: var(--mint-hover);
+}
+
+button.danger {
+    color: var(--danger);
+}
+
+input,
+textarea {
+    width: 100%;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    outline: none;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--mint-dark);
+    box-shadow: 0 0 0 2px rgba(113, 158, 149, .12);
+}
+
+textarea {
+    resize: vertical;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.muted {
+    color: var(--text-secondary);
+}
+
+.small {
+    font-size: 11px;
+}
+
+.app-header {
+    height: var(--header-height);
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 5;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--mint);
+    display: grid;
+    place-items: center;
+    color: var(--choco);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.brand-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+
+.brand-subtitle {
+    margin-top: 2px;
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.save-status {
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    margin-right: 5px;
+}
+
+#app {
+    height: calc(100% - var(--header-height));
+}
+
+/* Welcome screen */
+
+.welcome-screen {
+    height: 100%;
+    overflow-y: auto;
+    padding: 44px 24px 60px;
+}
+
+.welcome-inner {
+    width: min(100%, 1050px);
+    margin: 0 auto;
+}
+
+.welcome-hero {
+    padding: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.welcome-hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(23px, 4vw, 34px);
+    letter-spacing: .02em;
+}
+
+.welcome-hero p {
+    margin: 0;
+    line-height: 1.9;
+    color: var(--text-secondary);
+}
+
+.hero-mark {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 28px;
+    background: var(--surface-secondary);
+    color: var(--mint-dark);
+    font-size: 48px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.section-heading h2 {
+    font-size: 15px;
+    margin: 0;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.project-card {
+    min-height: 150px;
+    padding: 19px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 10px;
+}
+
+.project-card:hover {
+    border-color: var(--mint-dark);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.project-card-title {
+    font-size: 15px;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.project-card-meta {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.project-card-bottom {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.project-card-bottom button {
+    padding: 5px 8px;
+    font-size: 11px;
+}
+
+.empty-projects {
+    padding: 42px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .55);
+    line-height: 2;
+}
+
+.welcome-footer {
+    margin-top: 28px;
+    font-size: 11px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+}
+
+/* Editor */
+
+.editor-screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.editor-toolbar {
+    min-height: 50px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.project-name-display {
+    font-size: 14px;
+    font-weight: 650;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.editor-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+.editor-toolbar button {
+    padding: 7px 10px;
+    font-size: 11px;
+}
+
+.editor-workspace {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 220px minmax(250px, 1fr) 800px;
+    gap: 1px;
+    background: var(--border);
+}
+
+.pane {
+    background: var(--surface);
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.pane-heading {
+    height: 48px;
+    flex-shrink: 0;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.pane-heading h2 {
+    font-size: 12px;
+    margin: 0;
+    font-weight: 700;
+}
+
+.pane-heading button {
+    padding: 6px 9px;
+    font-size: 11px;
+}
+
+.scene-count {
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.scene-list {
+    padding: 10px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.scene-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 9px;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-color: transparent;
+    background: transparent;
+}
+
+.scene-item.active {
+    background: var(--mint);
+    border-color: var(--mint);
+}
+
+.scene-number {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, .8);
+    color: var(--choco);
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.scene-item.active .scene-number {
+    background: var(--surface);
+}
+
+.scene-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.scene-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.scene-preview {
+    margin-top: 4px;
+    color: var(--text-secondary);
+    font-size: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.scene-item.active .scene-preview {
+    color: var(--text);
+}
+
+.scene-delete {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.scene-delete:hover {
+    color: var(--danger);
+    background: rgba(255,255,255,.7);
+}
+
+.scene-footer {
+    border-top: 1px solid var(--border);
+    padding: 12px;
+    font-size: 10px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.center-pane {
+    position: relative;
+}
+
+.document-header {
+    min-height: 48px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.document-header h2 {
+    font-size: 12px;
+    margin: 0;
+}
+
+.document-tools {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.document-tools button {
+    padding: 6px 9px;
+    font-size: 10px;
+}
+
+.editor-textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    resize: none;
+    border: none;
+    border-radius: 0;
+    padding: 24px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono",
+        "Noto Sans Mono CJK JP", monospace;
+    font-size: 13px;
+    line-height: 1.95;
+    tab-size: 4;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    box-shadow: none !important;
+}
+
+.editor-textarea:focus {
+    border: none;
+}
+
+.document-footer {
+    min-height: 30px;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+}
+
+.right-pane {
+    overflow-y: auto;
+}
+
+.right-pane .pane-heading {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--surface);
+}
+
+.input-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.input-section h3 {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.character-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.character-button {
+    padding: 8px 10px;
+    font-size: 11px;
+    background: var(--surface-secondary);
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+
+.character-button.selected {
+    background: var(--mint);
+    border-color: var(--mint-dark);
+    box-shadow: inset 0 0 0 1px var(--mint-dark);
+}
+
+.character-button.no-character {
+    background: var(--surface);
+    border-style: dashed;
+}
+
+.character-button.no-character.selected {
+    background: var(--mint);
+    border-style: solid;
+}
+
+.character-manager {
+    display: flex;
+    gap: 7px;
+    margin-bottom: 12px;
+}
+
+.character-manager input {
+    min-width: 0;
+    flex: 1;
+}
+
+.character-manager button {
+    flex-shrink: 0;
+}
+
+.character-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.character-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 7px;
+    background: var(--surface-secondary);
+}
+
+.character-row-name {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.character-row button {
+    padding: 4px 7px;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.selected-character {
+    color: var(--choco);
+    font-weight: 700;
+}
+
+.dialog-label {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 7px;
+    font-weight: 650;
+}
+
+.dialog-hint {
+    margin: 7px 0 0;
+    color: var(--text-secondary);
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.speech-input {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.8;
+}
+
+.speech-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 7px;
+}
+
+.speech-actions button {
+    flex: 1;
+}
+
+.speech-preview {
+    padding: 10px;
+    background: var(--surface-secondary);
+    border-radius: 7px;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.8;
+    margin-top: 10px;
+    min-height: 38px;
+}
+
+.utility-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.utility-buttons button {
+    font-size: 10px;
+}
+
+/* Modal */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    padding: 20px;
+    background: rgba(39, 51, 47, .32);
+    display: grid;
+    place-items: center;
+}
+
+.modal {
+    width: min(100%, 440px);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: 15px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, .13);
+}
+
+.modal h2 {
+    margin: 0 0 20px;
+    font-size: 17px;
+}
+
+.modal-field {
+    margin-bottom: 16px;
+}
+
+.modal-field input {
+    margin-top: 7px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 22px;
+}
+
+.toast {
+    position: fixed;
+    z-index: 50;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 30px);
+    padding: 11px 17px;
+    background: #424B47;
+    color: white;
+    border-radius: 9px;
+    box-shadow: var(--shadow);
+    font-size: 12px;
+    text-align: center;
+    pointer-events: none;
+}
+
+@media (max-width: 1000px) {
+    .editor-workspace {
+        grid-template-columns: 175px minmax(200px, 1fr) 245px;
+    }
+
+    .editor-textarea {
+        padding: 17px;
+    }
+
+    .header-actions .optional-action {
+        display: none;
+    }
+}
+
+@media (max-width: 700px) {
+    :root {
+        --header-height: 54px;
+    }
+
+    .app-header {
+        padding: 0 10px;
+    }
+
+    .brand-subtitle {
+        display: none;
+    }
+
+    .brand-title {
+        font-size: 12px;
+    }
+
+    .save-status {
+        display: none;
+    }
+
+    .header-actions {
+        gap: 4px;
+    }
+
+    .header-actions button {
+        padding: 7px 8px;
+        font-size: 10px;
+    }
+
+    .welcome-screen {
+        padding: 20px 13px 40px;
+    }
+
+    .welcome-hero {
+        padding: 23px 18px;
+    }
+
+    .hero-mark {
+        width: 58px;
+        height: 58px;
+        font-size: 28px;
+        border-radius: 16px;
+    }
+
+    .welcome-hero h1 {
+        font-size: 22px;
+    }
+
+    .editor-toolbar {
+        padding: 8px;
+        flex-wrap: wrap;
+    }
+
+    .editor-toolbar-actions {
+        gap: 4px;
+    }
+
+    .editor-toolbar button {
+        padding: 6px 7px;
+        font-size: 10px;
+    }
+
+    .editor-workspace {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(120px, 22%) minmax(180px, 1fr) minmax(190px, 36%);
+        gap: 1px;
+        overflow: hidden;
+    }
+
+    .pane-heading {
+        height: 39px;
+    }
+
+    .scene-list {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 7px;
+        gap: 6px;
+    }
+
+    .scene-item {
+        width: 135px;
+        min-width: 135px;
+        height: 56px;
+        margin: 0;
+        padding: 6px;
+    }
+
+    .scene-number {
+        width: 25px;
+        height: 25px;
+    }
+
+    .scene-footer {
+        display: none;
+    }
+
+    .editor-textarea {
+        padding: 13px;
+        font-size: 12px;
+    }
+
+    .right-pane .pane-heading {
+        position: sticky;
+        top: 0;
+    }
+
+    .right-pane {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-content: start;
+        overflow-y: auto;
+    }
+
+    .right-pane > .pane-heading {
+        grid-column: 1 / -1;
+    }
+
+    .right-pane .input-section {
+        padding: 12px;
+        min-width: 0;
+    }
+
+    .right-pane .input-section:first-of-type {
+        border-right: 1px solid var(--border);
+    }
+
+    .right-pane .input-section:last-of-type {
+        border-bottom: 1px solid var(--border);
+    }
+
+    .character-manager {
+        flex-wrap: wrap;
+    }
+
+    .speech-input {
+        min-height: 90px;
+    }
+
+    .speech-actions {
+        flex-wrap: wrap;
+    }
+
+    .document-tools button {
+        padding: 5px 7px;
+    }
+}
+
+@media (max-width: 390px) {
+    .header-actions button {
+        padding: 6px;
+    }
+
+    .right-pane {
+        grid-template-columns: 1fr;
+    }
+
+    .right-pane > .pane-heading {
+        grid-column: 1;
+    }
+
+    .right-pane .input-section:first-of-type {
+        border-right: none;
+    }
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+    <div class="brand">
+        <div class="brand-icon">✎</div>
+        <div>
+            <div class="brand-title">Tyrano Scenario Studio</div>
+            <div class="brand-subtitle">Browser-based Scenario Editor</div>
+        </div>
+    </div>
+
+    <div class="header-actions">
+        <span class="save-status" id="saveStatus">保存されています</span>
+        <button id="headerOpenButton" class="optional-action">プロジェクト一覧</button>
+        <button id="headerNewButton" class="primary">＋ 新規作成</button>
+    </div>
+</header>
+
+<main id="app"></main>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   Tyrano Scenario Studio
+   GitHub Pages向け・単一HTML版
+   ========================================================= */
+
+const APP_VERSION = "1.0.0";
+const STORAGE_KEY = "tyranoScenarioStudio.projects.v1";
+const ACTIVE_PROJECT_KEY = "tyranoScenarioStudio.activeProject.v1";
+const MAX_SCENES = 300;
+
+const $ = (selector, root = document) => root.querySelector(selector);
+
+const app = $("#app");
+const modalRoot = $("#modalRoot");
+const toastRoot = $("#toastRoot");
+
+let projects = [];
+let currentProject = null;
+let selectedSceneId = null;
+let selectedCharacter = null;
+let saveTimer = null;
+let toastTimer = null;
+let lastSavedSignature = "";
+let isRendering = false;
+
+/* =========================================================
+   Utilities
+   ========================================================= */
+
+function uid(prefix = "id") {
+    return prefix + "_" +
+        Date.now().toString(36) + "_" +
+        Math.random().toString(36).slice(2, 9);
+}
+
+function nowISO() {
+    return new Date().toISOString();
+}
+
+function formatDate(value) {
+    if (!value) return "日時不明";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "日時不明";
+    }
+
+    return date.toLocaleString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function getSceneText(scene) {
+    return scene ? String(scene.text ?? "") : "";
+}
+
+function getCurrentScene() {
+    if (!currentProject) return null;
+
+    return currentProject.scenes.find(
+        scene => scene.id === selectedSceneId
+    ) || null;
+}
+
+function getSceneNumber(sceneId) {
+    if (!currentProject) return 0;
+
+    return currentProject.scenes.findIndex(
+        scene => scene.id === sceneId
+    ) + 1;
+}
+
+function getProjectSceneCount(project) {
+    return Array.isArray(project.scenes) ? project.scenes.length : 0;
+}
+
+function getTotalCharacters(project) {
+    return (project.scenes || []).reduce(
+        (total, scene) => total + String(scene.text || "").length,
+        0
+    );
+}
+
+function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+
+    anchor.href = url;
+    anchor.download = filename;
+
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function sanitizeFilename(name) {
+    return String(name || "scenario")
+        .replace(/[\\/:*?"<>|]/g, "_")
+        .replace(/\s+/g, "_")
+        .slice(0, 100) || "scenario";
+}
+
+function normalizeProjectName(name) {
+    return String(name || "").trim().slice(0, 100);
+}
+
+function showToast(message) {
+    toastRoot.innerHTML = `
+        <div class="toast" role="status">
+            ${escapeHTML(message)}
+        </div>
+    `;
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+        toastRoot.innerHTML = "";
+    }, 2600);
+}
+
+/* =========================================================
+   Project data
+   ========================================================= */
+
+function createScene(number = 1) {
+    return {
+        id: uid("scene"),
+        name: `シーン ${number}`,
+        text: "",
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+    };
+}
+
+function createProject(name) {
+    const timestamp = nowISO();
+
+    return {
+        schemaVersion: 1,
+        appVersion: APP_VERSION,
+        id: uid("project"),
+        name: normalizeProjectName(name) || "新規プロジェクト",
+        characters: [],
+        scenes: [createScene(1)],
+        activeSceneId: null,
+        createdAt: timestamp,
+        updatedAt: timestamp
+    };
+}
+
+function normalizeProject(project) {
+    const normalized = {
+        schemaVersion: 1,
+        appVersion: APP_VERSION,
+        id: String(project.id || uid("project")),
+        name: normalizeProjectName(project.name) || "名称未設定",
+        characters: Array.isArray(project.characters)
+            ? project.characters
+                .filter(character =>
+                    character &&
+                    typeof character.name === "string" &&
+                    character.name.trim()
+                )
+                .map(character => ({
+                    id: String(character.id || uid("character")),
+                    name: character.name.trim().slice(0, 100)
+                }))
+            : [],
+        scenes: Array.isArray(project.scenes)
+            ? project.scenes.slice(0, MAX_SCENES).map((scene, index) => ({
+                id: String(scene.id || uid("scene")),
+                name: String(scene.name || `シーン ${index + 1}`)
+                    .slice(0, 100),
+                text: String(scene.text ?? ""),
+                createdAt: scene.createdAt || nowISO(),
+                updatedAt: scene.updatedAt || nowISO()
+            }))
+            : [],
+        activeSceneId: project.activeSceneId || null,
+        createdAt: project.createdAt || nowISO(),
+        updatedAt: project.updatedAt || nowISO()
+    };
+
+    if (normalized.scenes.length === 0) {
+        normalized.scenes.push(createScene(1));
+    }
+
+    if (!normalized.scenes.some(
+        scene => scene.id === normalized.activeSceneId
+    )) {
+        normalized.activeSceneId = normalized.scenes[0].id;
+    }
+
+    return normalized;
+}
+
+function loadProjects() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+
+        if (!raw) return [];
+
+        const parsed = JSON.parse(raw);
+
+        if (!Array.isArray(parsed)) return [];
+
+        return parsed.map(normalizeProject);
+    } catch (error) {
+        console.error("プロジェクトの読み込みに失敗しました。", error);
+        showToast("保存データを読み込めませんでした。");
+        return [];
+    }
+}
+
+function persistProjects(showStatus = true) {
+    if (!currentProject) return false;
+
+    currentProject.updatedAt = nowISO();
+    currentProject.activeSceneId = selectedSceneId;
+
+    const index = projects.findIndex(
+        project => project.id === currentProject.id
+    );
+
+    if (index >= 0) {
+        projects[index] = currentProject;
+    } else {
+        projects.unshift(currentProject);
+    }
+
+    try {
+        const serialized = JSON.stringify(projects);
+        localStorage.setItem(STORAGE_KEY, serialized);
+        localStorage.setItem(ACTIVE_PROJECT_KEY, currentProject.id);
+
+        lastSavedSignature = getProjectSignature(currentProject);
+
+        if (showStatus) {
+            updateSaveStatus("保存されています");
+        }
+
+        return true;
+    } catch (error) {
+        console.error("保存に失敗しました。", error);
+        updateSaveStatus("保存失敗");
+        showToast("保存容量が不足している可能性があります。");
+        return false;
+    }
+}
+
+function getProjectSignature(project) {
+    return JSON.stringify({
+        name: project.name,
+        characters: project.characters,
+        scenes: project.scenes,
+        activeSceneId: selectedSceneId
+    });
+}
+
+function scheduleSave() {
+    if (!currentProject) return;
+
+    updateSaveStatus("保存中…");
+
+    clearTimeout(saveTimer);
+
+    saveTimer = setTimeout(() => {
+        persistProjects();
+        renderSceneList();
+        renderWelcomeIfVisible();
+    }, 350);
+}
+
+function updateSaveStatus(message) {
+    const status = $("#saveStatus");
+
+    if (status) {
+        status.textContent = message;
+    }
+}
+
+function renderWelcomeIfVisible() {
+    if (!$("#welcomeScreen")) return;
+
+    renderWelcome();
+}
+
+/* =========================================================
+   Welcome screen
+   ========================================================= */
+
+function renderWelcome() {
+    isRendering = true;
+
+    app.innerHTML = `
+        <section class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-inner">
+                <div class="welcome-hero">
+                    <div>
+                        <h1>Tyrano Scenario Studio</h1>
+                        <p>
+                            ティラノビルダー向けシナリオを、<br>
+                            シーンごとに整理して執筆できるエディタです。<br>
+                            編集内容はブラウザ内に自動保存されます。
+                        </p>
+                        <div style="margin-top:22px;display:flex;gap:8px;flex-wrap:wrap">
+                            <button class="primary" id="welcomeNewButton">
+                                ＋ 新しいプロジェクト
+                            </button>
+                            <button id="importProjectButton">
+                                JSONを読み込む
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-mark" aria-hidden="true">✎</div>
+                </div>
+
+                <div class="section-heading">
+                    <h2>最近のプロジェクト</h2>
+                    <span class="muted small">
+                        ${projects.length} 件
+                    </span>
+                </div>
+
+                <div id="projectGrid" class="project-grid"></div>
+
+                <div class="welcome-footer">
+                    保存先：このブラウザのローカルストレージ<br>
+                    大切なプロジェクトは、定期的にJSON形式で書き出してください。
+                    ブラウザのデータ削除や別端末への移行では、保存内容が失われる場合があります。
+                </div>
+            </div>
+        </section>
+    `;
+
+    $("#welcomeNewButton").addEventListener("click", openNewProjectModal);
+    $("#importProjectButton").addEventListener("click", importProjectFromFile);
+
+    renderProjectCards();
+    isRendering = false;
+}
+
+function renderProjectCards() {
+    const grid = $("#projectGrid");
+
+    if (!grid) return;
+
+    if (projects.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-projects" style="grid-column:1/-1">
+                <div style="font-size:25px;margin-bottom:8px">▤</div>
+                まだプロジェクトがありません。<br>
+                「新しいプロジェクト」から作成してください。
+            </div>
+        `;
+
+        return;
+    }
+
+    grid.innerHTML = projects
+        .slice()
+        .sort((a, b) =>
+            new Date(b.updatedAt) - new Date(a.updatedAt)
+        )
+        .map(project => `
+            <article class="project-card" data-open-project="${escapeHTML(project.id)}">
+                <div style="font-size:22px;color:var(--mint-dark)">▤</div>
+
+                <div class="project-card-title">
+                    ${escapeHTML(project.name)}
+                </div>
+
+                <div class="project-card-meta">
+                    シーン：${getProjectSceneCount(project)} / ${MAX_SCENES}<br>
+                    キャラクター：${project.characters.length} 人<br>
+                    更新：${escapeHTML(formatDate(project.updatedAt))}
+                </div>
+
+                <div class="project-card-bottom">
+                    <span class="muted small">クリックして開く</span>
+                    <button class="danger" data-delete-project="${escapeHTML(project.id)}">
+                        削除
+                    </button>
+                </div>
+            </article>
+        `).join("");
+
+    grid.querySelectorAll("[data-open-project]").forEach(card => {
+        card.addEventListener("click", event => {
+            if (event.target.closest("[data-delete-project]")) return;
+
+            openProject(card.dataset.openProject);
+        });
+    });
+
+    grid.querySelectorAll("[data-delete-project]").forEach(button => {
+        button.addEventListener("click", event => {
+            event.stopPropagation();
+            deleteProject(button.dataset.deleteProject);
+        });
+    });
+}
+
+/* =========================================================
+   Project creation / loading / deletion
+   ========================================================= */
+
+function openNewProjectModal() {
+    showModal(`
+        <h2>新しいプロジェクト</h2>
+
+        <div class="modal-field">
+            <label class="dialog-label" for="newProjectName">
+                プロジェクト名
+            </label>
+            <input
+                id="newProjectName"
+                maxlength="100"
+                placeholder="例：夏のビジュアルノベル"
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="dialog-hint">
+            作成後、シーンとキャラクターを自由に登録できます。
+        </div>
+
+        <div class="modal-actions">
+            <button id="cancelModalButton">キャンセル</button>
+            <button class="primary" id="createProjectButton">作成する</button>
+        </div>
+    `);
+
+    const input = $("#newProjectName");
+    input.focus();
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            createProjectFromModal();
+        }
+    });
+
+    $("#cancelModalButton").addEventListener("click", closeModal);
+    $("#createProjectButton").addEventListener("click", createProjectFromModal);
+}
+
+function createProjectFromModal() {
+    const name = normalizeProjectName($("#newProjectName")?.value);
+
+    if (!name) {
+        showToast("プロジェクト名を入力してください。");
+        $("#newProjectName")?.focus();
+        return;
+    }
+
+    const project = createProject(name);
+
+    projects.unshift(project);
+    currentProject = project;
+    selectedSceneId = project.scenes[0].id;
+    selectedCharacter = null;
+
+    persistProjects(false);
+    closeModal();
+    renderEditor();
+
+    showToast("プロジェクトを作成しました。");
+}
+
+function openProject(projectId) {
+    const project = projects.find(item => item.id === projectId);
+
+    if (!project) {
+        showToast("プロジェクトが見つかりません。");
+        return;
+    }
+
+    if (currentProject) {
+        persistProjects(false);
+    }
+
+    currentProject = project;
+    selectedSceneId = project.activeSceneId || project.scenes[0]?.id;
+
+    if (!project.scenes.some(scene => scene.id === selectedSceneId)) {
+        selectedSceneId = project.scenes[0].id;
+    }
+
+    selectedCharacter = null;
+
+    persistProjects(false);
+    renderEditor();
+}
+
+function deleteProject(projectId) {
+    const project = projects.find(item => item.id === projectId);
+
+    if (!project) return;
+
+    showModal(`
+        <h2>プロジェクトを削除</h2>
+        <p style="line-height:1.9">
+            「${escapeHTML(project.name)}」を削除しますか？<br>
+            このブラウザに保存されたプロジェクトデータが削除されます。
+        </p>
+        <p class="muted small">事前にJSONを書き出しておくことをおすすめします。</p>
+
+        <div class="modal-actions">
+            <button id="cancelModalButton">キャンセル</button>
+            <button class="danger" id="confirmDeleteProjectButton">削除する</button>
+        </div>
+    `);
+
+    $("#cancelModalButton").addEventListener("click", closeModal);
+
+    $("#confirmDeleteProjectButton").addEventListener("click", () => {
+        projects = projects.filter(item => item.id !== projectId);
+
+        if (currentProject?.id === projectId) {
+            currentProject = null;
+            selectedSceneId = null;
+            selectedCharacter = null;
+        }
+
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+
+            if (currentProject) {
+                localStorage.setItem(ACTIVE_PROJECT_KEY, currentProject.id);
+            } else {
+                localStorage.removeItem(ACTIVE_PROJECT_KEY);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+        closeModal();
+        renderWelcome();
+
+        showToast("プロジェクトを削除しました。");
+    });
+}
+
+/* =========================================================
+   Editor rendering
+   ========================================================= */
+
+function renderEditor() {
+    if (!currentProject) {
+        renderWelcome();
+        return;
+    }
+
+    app.innerHTML = `
+        <section class="editor-screen">
+            <div class="editor-toolbar">
+                <div style="min-width:0;flex:1">
+                    <div class="project-name-display" id="projectNameDisplay">
+                        ${escapeHTML(currentProject.name)}
+                    </div>
+                    <div class="muted small">
+                        ${currentProject.scenes.length} シーン
+                        ／ ${currentProject.characters.length} キャラクター
+                    </div>
+                </div>
+
+                <div class="editor-toolbar-actions">
+                    <button id="renameProjectButton">名前変更</button>
+                    <button id="exportJsonButton" class="optional-action">JSON</button>
+                    <button id="exportTxtButton" class="optional-action">TXT</button>
+                    <button id="copyAllButton" class="primary">全文コピー</button>
+                </div>
+            </div>
+
+            <div class="editor-workspace">
+                <aside class="pane">
+                    <div class="pane-heading">
+                        <h2>シーン一覧</h2>
+                        <button class="primary" id="addSceneButton">＋ 追加</button>
+                    </div>
+
+                    <div class="scene-list" id="sceneList"></div>
+
+                    <div class="scene-footer">
+                        最大 ${MAX_SCENES} シーン<br>
+                        編集内容は自動保存されます。
+                    </div>
+                </aside>
+
+                <section class="pane center-pane">
+                    <div class="document-header">
+                        <h2 id="documentTitle">シナリオ本文</h2>
+
+                        <div class="document-tools">
+                            <button id="renameSceneButton">シーン名変更</button>
+                            <button id="copySceneButton">このシーンをコピー</button>
+                        </div>
+                    </div>
+
+                    <textarea
+                        id="mainEditor"
+                        class="editor-textarea"
+                        spellcheck="false"
+                        aria-label="シナリオ本文"
+                        placeholder="右側の入力エリアからセリフを追加するか、ここに直接入力してください。"
+                    ></textarea>
+
+                    <div class="document-footer">
+                        <span id="documentStats">0 文字</span>
+                        <span id="documentSaveStatus">自動保存</span>
+                    </div>
+                </section>
+
+                <aside class="pane right-pane">
+                    <div class="pane-heading">
+                        <h2>入力エリア</h2>
+                        <span class="scene-count" id="inputSceneLabel"></span>
+                    </div>
+
+                    <section class="input-section">
+                        <h3>1. キャラクターを選択</h3>
+
+                        <div class="character-toolbar" id="characterToolbar"></div>
+
+                        <p class="dialog-hint">
+                            選択した名前がセリフの先頭に「#名前」の形式で入ります。
+                            未選択を選ぶと「#」のみになります。
+                        </p>
+                    </section>
+
+                    <section class="input-section">
+                        <h3>2. セリフを入力</h3>
+
+                        <label class="dialog-label" for="speechInput">
+                            セリフ本文
+                        </label>
+
+                        <textarea
+                            id="speechInput"
+                            class="speech-input"
+                            placeholder="セリフを入力してください。"
+                        ></textarea>
+
+                        <div class="speech-preview" id="speechPreview">#名前
+セリフ本文</div>
+
+                        <div class="speech-actions">
+                            <button class="primary" id="insertSpeechButton">
+                                本文に追加
+                            </button>
+                            <button id="clearSpeechButton">クリア</button>
+                        </div>
+
+                        <p class="dialog-hint">
+                            セリフは名前の次の行から入力されます。
+                            複数行のセリフにも対応しています。
+                        </p>
+                    </section>
+
+                    <section class="input-section">
+                        <h3>3. キャラクター管理</h3>
+
+                        <div class="character-manager">
+                            <input
+                                id="newCharacterName"
+                                maxlength="100"
+                                placeholder="キャラクター名"
+                                aria-label="新しいキャラクター名"
+                            >
+                            <button class="primary" id="addCharacterButton">
+                                登録
+                            </button>
+                        </div>
+
+                        <div class="character-list" id="characterList"></div>
+
+                        <p class="dialog-hint">
+                            登録したキャラクターは、すべてのシーンで利用できます。
+                        </p>
+                    </section>
+
+                    <section class="input-section">
+                        <h3>4. 書き出し・コピー</h3>
+
+                        <div class="utility-buttons">
+                            <button id="rightCopySceneButton">シーンをコピー</button>
+                            <button id="rightCopyAllButton">全文コピー</button>
+                            <button id="rightExportTxtButton">TXT書き出し</button>
+                            <button id="rightExportJsonButton">JSON書き出し</button>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    `;
+
+    bindEditorEvents();
+    renderSceneList();
+    renderCharacterControls();
+    updateEditorText();
+    updateSaveStatus("保存されています");
+
+    lastSavedSignature = getProjectSignature(currentProject);
+}
+
+function bindEditorEvents() {
+    $("#headerOpenButton").onclick = () => {
+        if (currentProject) persistProjects(false);
+        currentProject = null;
+        selectedSceneId = null;
+        selectedCharacter = null;
+        renderWelcome();
+    };
+
+    $("#headerNewButton").onclick = openNewProjectModal;
+
+    $("#renameProjectButton").onclick = renameProject;
+
+    $("#exportJsonButton").onclick = exportJSON;
+    $("#rightExportJsonButton").onclick = exportJSON;
+
+    $("#exportTxtButton").onclick = exportTXT;
+    $("#rightExportTxtButton").onclick = exportTXT;
+
+    $("#copyAllButton").onclick = copyAllText;
+    $("#rightCopyAllButton").onclick = copyAllText;
+
+    $("#copySceneButton").onclick = copyCurrentScene;
+    $("#rightCopySceneButton").onclick = copyCurrentScene;
+
+    $("#addSceneButton").onclick = addScene;
+    $("#renameSceneButton").onclick = renameCurrentScene;
+
+    $("#mainEditor").addEventListener("input", () => {
+        const scene = getCurrentScene();
+
+        if (!scene) return;
+
+        scene.text = $("#mainEditor").value;
+        scene.updatedAt = nowISO();
+
+        updateDocumentStats();
+        renderSceneList();
+        scheduleSave();
+    });
+
+    $("#speechInput").addEventListener("input", updateSpeechPreview);
+
+    $("#insertSpeechButton").onclick = insertSpeech;
+    $("#clearSpeechButton").onclick = () => {
+        $("#speechInput").value = "";
+        updateSpeechPreview();
+        $("#speechInput").focus();
+    };
+
+    $("#addCharacterButton").onclick = addCharacter;
+
+    $("#newCharacterName").addEventListener("keydown", event => {
+        if (event.key === "Enter") addCharacter();
+    });
+}
+
+/* =========================================================
+   Scene management
+   ========================================================= */
+
+function renderSceneList() {
+    const list = $("#sceneList");
+
+    if (!list || !currentProject) return;
+
+    list.innerHTML = currentProject.scenes.map((scene, index) => {
+        const active = scene.id === selectedSceneId;
+        const preview = getSceneText(scene)
+            .replace(/\s+/g, " ")
+            .trim();
+
+        return `
+            <div
+                class="scene-item ${active ? "active" : ""}"
+                data-scene-id="${escapeHTML(scene.id)}"
+                role="button"
+                tabindex="0"
+                aria-current="${active ? "true" : "false"}"
+            >
+                <div class="scene-number">${index + 1}</div>
+
+                <div class="scene-info">
+                    <div class="scene-label">${escapeHTML(scene.name)}</div>
+                    <div class="scene-preview">
+                        ${escapeHTML(preview || "本文なし")}
+                    </div>
+                </div>
+
+                ${currentProject.scenes.length > 1 ? `
+                    <button
+                        class="scene-delete"
+                        data-delete-scene="${escapeHTML(scene.id)}"
+                        title="シーンを削除"
+                        aria-label="${escapeHTML(scene.name)}を削除"
+                    >×</button>
+                ` : ""}
+            </div>
+        `;
+    }).join("");
+
+    list.querySelectorAll("[data-scene-id]").forEach(item => {
+        item.addEventListener("click", event => {
+            if (event.target.closest("[data-delete-scene]")) return;
+
+            switchScene(item.dataset.sceneId);
+        });
+
+        item.addEventListener("keydown", event => {
+            if (
+                event.target === item &&
+                (event.key === "Enter" || event.key === " ")
+            ) {
+                event.preventDefault();
+                switchScene(item.dataset.sceneId);
+            }
+        });
+    });
+
+    list.querySelectorAll("[data-delete-scene]").forEach(button => {
+        button.addEventListener("click", event => {
+            event.stopPropagation();
+            deleteScene(button.dataset.deleteScene);
+        });
+    });
+
+    const addButton = $("#addSceneButton");
+
+    if (addButton) {
+        addButton.disabled = currentProject.scenes.length >= MAX_SCENES;
+        addButton.title = addButton.disabled
+            ? `シーンは最大${MAX_SCENES}件です`
+            : "シーンを追加";
+    }
+
+    const toolbarCount = document.querySelector(".editor-toolbar .muted");
+
+    if (toolbarCount) {
+        toolbarCount.textContent =
+            `${currentProject.scenes.length} シーン ／ ` +
+            `${currentProject.characters.length} キャラクター`;
+    }
+}
+
+function switchScene(sceneId) {
+    if (!currentProject) return;
+
+    const scene = currentProject.scenes.find(
+        item => item.id === sceneId
+    );
+
+    if (!scene) return;
+
+    const editor = $("#mainEditor");
+
+    if (editor) {
+        const previousScene = getCurrentScene();
+
+        if (previousScene) {
+            previousScene.text = editor.value;
+            previousScene.updatedAt = nowISO();
+        }
+    }
+
+    selectedSceneId = sceneId;
+    currentProject.activeSceneId = sceneId;
+
+    updateEditorText();
+    renderSceneList();
+    persistProjects(false);
+
+    const activeItem = $(`[data-scene-id="${CSS.escape(sceneId)}"]`);
+
+    activeItem?.scrollIntoView({
+        block: "nearest",
+        inline: "nearest"
+    });
+}
+
+function addScene() {
+    if (!currentProject) return;
+
+    if (currentProject.scenes.length >= MAX_SCENES) {
+        showToast(`シーンは最大${MAX_SCENES}件までです。`);
+        return;
+    }
+
+    const number = currentProject.scenes.length + 1;
+    const scene = createScene(number);
+
+    currentProject.scenes.push(scene);
+    selectedSceneId = scene.id;
+
+    persistProjects(false);
+    renderSceneList();
+    updateEditorText();
+
+    $("#mainEditor")?.focus();
+
+    showToast(`シーン ${number} を追加しました。`);
+}
+
+function deleteScene(sceneId) {
+    if (!currentProject || currentProject.scenes.length <= 1) {
+        showToast("最後の1シーンは削除できません。");
+        return;
+    }
+
+    const scene = currentProject.scenes.find(
+        item => item.id === sceneId
+    );
+
+    if (!scene) return;
+
+    showModal(`
+        <h2>シーンを削除</h2>
+
+        <p style="line-height:1.9">
+            「${escapeHTML(scene.name)}」を削除しますか？<br>
+            シーン内の本文も削除されます。
+        </p>
+
+        <div class="modal-actions">
+            <button id="cancelModalButton">キャンセル</button>
+            <button class="danger" id="confirmDeleteSceneButton">削除する</button>
+        </div>
+    `);
+
+    $("#cancelModalButton").onclick = closeModal;
+
+    $("#confirmDeleteSceneButton").onclick = () => {
+        const index = currentProject.scenes.findIndex(
+            item => item.id === sceneId
+        );
+
+        currentProject.scenes = currentProject.scenes.filter(
+            item => item.id !== sceneId
+        );
+
+        if (selectedSceneId === sceneId) {
+            const nextIndex = Math.max(0, index - 1);
+            selectedSceneId = currentProject.scenes[nextIndex].id;
+        }
+
+        closeModal();
+        updateEditorText();
+        renderSceneList();
+        persistProjects(false);
+
+        showToast("シーンを削除しました。");
+    };
+}
+
+function renameCurrentScene() {
+    const scene = getCurrentScene();
+
+    if (!scene) return;
+
+    showModal(`
+        <h2>シーン名を変更</h2>
+
+        <div class="modal-field">
+            <label class="dialog-label" for="renameSceneInput">シーン名</label>
+            <input
+                id="renameSceneInput"
+                maxlength="100"
+                value="${escapeHTML(scene.name)}"
+            >
+        </div>
+
+        <div class="modal-actions">
+            <button id="cancelModalButton">キャンセル</button>
+            <button class="primary" id="confirmRenameSceneButton">変更する</button>
+        </div>
+    `);
+
+    const input = $("#renameSceneInput");
+    input.focus();
+    input.select();
+
+    $("#cancelModalButton").onclick = closeModal;
+
+    $("#confirmRenameSceneButton").onclick = () => {
+        const name = input.value.trim();
+
+        if (!name) {
+            showToast("シーン名を入力してください。");
+            return;
+        }
+
+        scene.name = name.slice(0, 100);
+        scene.updatedAt = nowISO();
+
+        closeModal();
+        updateEditorText();
+        renderSceneList();
+        persistProjects(false);
+    };
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            $("#confirmRenameSceneButton").click();
+        }
+    });
+}
+
+function updateEditorText() {
+    const scene = getCurrentScene();
+
+    if (!scene) return;
+
+    const editor = $("#mainEditor");
+
+    if (editor) {
+        editor.value = scene.text;
+    }
+
+    const title = $("#documentTitle");
+
+    if (title) {
+        title.textContent =
+            `${getSceneNumber(scene.id)}. ${scene.name}`;
+    }
+
+    const inputSceneLabel = $("#inputSceneLabel");
+
+    if (inputSceneLabel) {
+        inputSceneLabel.textContent =
+            `シーン ${getSceneNumber(scene.id)}`;
+    }
+
+    updateDocumentStats();
+}
+
+function updateDocumentStats() {
+    const editor = $("#mainEditor");
+
+    if (!editor) return;
+
+    const text = editor.value;
+    const stats = $("#documentStats");
+
+    if (stats) {
+        stats.textContent =
+            `${text.length.toLocaleString("ja-JP")} 文字 ／ ` +
+            `${text.split("\n").length} 行`;
+    }
+}
+
+/* =========================================================
+   Character management
+   ========================================================= */
+
+function renderCharacterControls() {
+    if (!currentProject) return;
+
+    const toolbar = $("#characterToolbar");
+    const list = $("#characterList");
+
+    if (!toolbar || !list) return;
+
+    const isNoCharacterSelected = selectedCharacter === null;
+
+    toolbar.innerHTML = `
+        <button
+            class="character-button no-character ${isNoCharacterSelected ? "selected" : ""}"
+            data-character-id="__none__"
+        >キャラ未選択（#のみ）</button>
+
+        ${currentProject.characters.map(character => `
+            <button
+                class="character-button ${
+                    selectedCharacter === character.id ? "selected" : ""
+                }"
+                data-character-id="${escapeHTML(character.id)}"
+            >${escapeHTML(character.name)}</button>
+        `).join("")}
+    `;
+
+    toolbar.querySelectorAll("[data-character-id]").forEach(button => {
+        button.addEventListener("click", () => {
+            const characterId = button.dataset.characterId;
+
+            selectedCharacter = characterId === "__none__"
+                ? null
+                : characterId;
+
+            renderCharacterControls();
+            updateSpeechPreview();
+        });
+    });
+
+    if (currentProject.characters.length === 0) {
+        list.innerHTML = `
+            <div class="muted small">
+                キャラクターはまだ登録されていません。
+            </div>
+        `;
+    } else {
+        list.innerHTML = currentProject.characters.map(character => `
+            <div class="character-row">
+                <div class="character-row-name ${
+                    selectedCharacter === character.id ? "selected-character" : ""
+                }">
+                    ${escapeHTML(character.name)}
+                </div>
+
+                <button data-select-character="${escapeHTML(character.id)}">
+                    選択
+                </button>
+
+                <button
+                    class="danger"
+                    data-delete-character="${escapeHTML(character.id)}"
+                >削除</button>
+            </div>
+        `).join("");
+    }
+
+    list.querySelectorAll("[data-select-character]").forEach(button => {
+        button.addEventListener("click", () => {
+            selectedCharacter = button.dataset.selectCharacter;
+            renderCharacterControls();
+            updateSpeechPreview();
+        });
+    });
+
+    list.querySelectorAll("[data-delete-character]").forEach(button => {
+        button.addEventListener("click", () => {
+            deleteCharacter(button.dataset.deleteCharacter);
+        });
+    });
+}
+
+function addCharacter() {
+    if (!currentProject) return;
+
+    const input = $("#newCharacterName");
+    const name = String(input.value || "").trim();
+
+    if (!name) {
+        showToast("キャラクター名を入力してください。");
+        input.focus();
+        return;
+    }
+
+    if (currentProject.characters.some(
+        character => character.name === name
+    )) {
+        showToast("同じ名前のキャラクターが登録されています。");
+        input.focus();
+        return;
+    }
+
+    const character = {
+        id: uid("character"),
+        name: name.slice(0, 100)
+    };
+
+    currentProject.characters.push(character);
+    selectedCharacter = character.id;
+
+    input.value = "";
+
+    renderCharacterControls();
+    scheduleSave();
+
+    showToast(`「${character.name}」を登録しました。`);
+}
+
+function deleteCharacter(characterId) {
+    if (!currentProject) return;
+
+    const character = currentProject.characters.find(
+        item => item.id === characterId
+    );
+
+    if (!character) return;
+
+    showModal(`
+        <h2>キャラクターを削除</h2>
+
+        <p style="line-height:1.9">
+            「${escapeHTML(character.name)}」をキャラクター一覧から削除しますか？
+        </p>
+
+        <p class="muted small">
+            すでに本文へ入力された「#${escapeHTML(character.name)}」は変更されません。
+        </p>
+
+        <div class="modal-actions">
+            <button id="cancelModalButton">キャンセル</button>
+            <button class="danger" id="confirmDeleteCharacterButton">削除する</button>
+        </div>
+    `);
+
+    $("#cancelModalButton").onclick = closeModal;
+
+    $("#confirmDeleteCharacterButton").onclick = () => {
+        currentProject.characters = currentProject.characters.filter(
+            item => item.id !== characterId
+        );
+
+        if (selectedCharacter === characterId) {
+            selectedCharacter = null;
+        }
+
+        closeModal();
+        renderCharacterControls();
+        scheduleSave();
+
+        showToast("キャラクターを削除しました。");
+    };
+}
+
+/* =========================================================
+   Speech input
+   ========================================================= */
+
+function getSelectedCharacterName() {
+    if (!currentProject || selectedCharacter === null) {
+        return "";
+    }
+
+    const character = currentProject.characters.find(
+        item => item.id === selectedCharacter
+    );
+
+    return character ? character.name : "";
+}
+
+function buildSpeechBlock(text) {
+    const name = getSelectedCharacterName();
+    const normalizedText = String(text ?? "").replace(/\r\n?/g, "\n");
+
+    return "#" + name + "\n" + normalizedText;
+}
+
+function updateSpeechPreview() {
+    const preview = $("#speechPreview");
+
+    if (!preview) return;
+
+    const text = $("#speechInput")?.value || "";
+
+    preview.textContent = buildSpeechBlock(text);
+}
+
+function insertSpeech() {
+    const scene = getCurrentScene();
+    const editor = $("#mainEditor");
+
+    if (!scene || !editor) return;
+
+    const speechText = $("#speechInput").value;
+
+    if (!speechText.trim()) {
+        showToast("セリフを入力してください。");
+        $("#speechInput").focus();
+        return;
+    }
+
+    const block = buildSpeechBlock(speechText);
+    const original = editor.value;
+
+    let start = editor.selectionStart;
+    let end = editor.selectionEnd;
+
+    if (start == null || end == null) {
+        start = original.length;
+        end = original.length;
+    }
+
+    const before = original.slice(0, start);
+    const after = original.slice(end);
+
+    let insertion = block;
+
+    if (before.length > 0 && !before.endsWith("\n")) {
+        insertion = "\n" + insertion;
+    }
+
+    if (after.length > 0 && !insertion.endsWith("\n")) {
+        insertion += "\n";
+    }
+
+    const nextText = before + insertion + after;
+
+    editor.value = nextText;
+    scene.text = nextText;
+    scene.updatedAt = nowISO();
+
+    const cursorPosition = before.length + insertion.length;
+
+    editor.focus();
+    editor.setSelectionRange(cursorPosition, cursorPosition);
+
+    updateDocumentStats();
+    renderSceneList();
+    scheduleSave();
+
+    $("#speechInput").value = "";
+    updateSpeechPreview();
+
+    showToast("セリフを本文に追加しました。");
+}
+
+/* =========================================================
+   Project rename
+   ========================================================= */
+
+function renameProject() {
+    if (!currentProject) return;
+
+    showModal(`
+        <h2>プロジェクト名を変更</h2>
+
+        <div class="modal-field">
+            <label class="dialog-label" for="renameProjectInput">
+                プロジェクト名
+            </label>
+            <input
+                id="renameProjectInput"
+                maxlength="100"
+                value="${escapeHTML(currentProject.name)}"
+            >
+        </div>
+
+        <div class="modal-actions">
+            <button id="cancelModalButton">キャンセル</button>
+            <button class="primary" id="confirmRenameProjectButton">変更する</button>
+        </div>
+    `);
+
+    const input = $("#renameProjectInput");
+
+    input.focus();
+    input.select();
+
+    $("#cancelModalButton").onclick = closeModal;
+
+    $("#confirmRenameProjectButton").onclick = () => {
+        const name = normalizeProjectName(input.value);
+
+        if (!name) {
+            showToast("プロジェクト名を入力してください。");
+            return;
+        }
+
+        currentProject.name = name;
+
+        closeModal();
+
+        $("#projectNameDisplay").textContent = name;
+
+        persistProjects(false);
+        renderSceneList();
+
+        showToast("プロジェクト名を変更しました。");
+    };
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            $("#confirmRenameProjectButton").click();
+        }
+    });
+}
+
+/* =========================================================
+   Copy / export
+   ========================================================= */
+
+function getAllScenarioText() {
+    if (!currentProject) return "";
+
+    return currentProject.scenes
+        .map(scene => scene.text)
+        .join("\n\n");
+}
+
+async function copyText(text, successMessage) {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            const textarea = document.createElement("textarea");
+
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            textarea.style.pointerEvents = "none";
+
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+
+            const successful = document.execCommand("copy");
+            textarea.remove();
+
+            if (!successful) {
+                throw new Error("コピーに失敗しました。");
+            }
+        }
+
+        showToast(successMessage);
+    } catch (error) {
+        console.error(error);
+        showToast("コピーできませんでした。ブラウザの権限を確認してください。");
+    }
+}
+
+function copyAllText() {
+    if (!currentProject) return;
+
+    persistProjects(false);
+
+    return copyText(
+        getAllScenarioText(),
+        "プロジェクト全文をコピーしました。"
+    );
+}
+
+function copyCurrentScene() {
+    const scene = getCurrentScene();
+
+    if (!scene) return;
+
+    return copyText(
+        scene.text,
+        `「${scene.name}」をコピーしました。`
+    );
+}
+
+function exportTXT() {
+    if (!currentProject) return;
+
+    persistProjects(false);
+
+    const content = "\uFEFF" + getAllScenarioText();
+
+    const blob = new Blob([content], {
+        type: "text/plain;charset=utf-8"
+    });
+
+    downloadBlob(
+        blob,
+        sanitizeFilename(currentProject.name) + ".txt"
+    );
+
+    showToast("TXTファイルを書き出しました。");
+}
+
+function exportJSON() {
+    if (!currentProject) return;
+
+    persistProjects(false);
+
+    const exportData = {
+        format: "Tyrano Scenario Studio Project",
+        schemaVersion: 1,
+        exportedAt: nowISO(),
+        project: currentProject
+    };
+
+    const blob = new Blob(
+        [JSON.stringify(exportData, null, 2)],
+        { type: "application/json;charset=utf-8" }
+    );
+
+    downloadBlob(
+        blob,
+        sanitizeFilename(currentProject.name) + ".json"
+    );
+
+    showToast("JSONファイルを書き出しました。");
+}
+
+function importProjectFromFile() {
+    const input = document.createElement("input");
+
+    input.type = "file";
+    input.accept = ".json,application/json";
+
+    input.addEventListener("change", async () => {
+        const file = input.files?.[0];
+
+        if (!file) return;
+
+        try {
+            const raw = await file.text();
+            const parsed = JSON.parse(raw);
+
+            const sourceProject = parsed.project || parsed;
+
+            if (
+                !sourceProject ||
+                typeof sourceProject !== "object" ||
+                !Array.isArray(sourceProject.scenes)
+            ) {
+                throw new Error("有効なプロジェクトJSONではありません。");
+            }
+
+            const project = normalizeProject(sourceProject);
+
+            if (projects.some(item => item.id === project.id)) {
+                project.id = uid("project");
+            }
+
+            project.name = project.name.slice(0, 100);
+
+            projects.unshift(project);
+
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+            } catch (error) {
+                projects = projects.filter(item => item.id !== project.id);
+                throw new Error("保存容量が不足しているため読み込めませんでした。");
+            }
+
+            openProject(project.id);
+            showToast("プロジェクトを読み込みました。");
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || "JSONファイルを読み込めませんでした。");
+        }
+    });
+
+    input.click();
+}
+
+/* =========================================================
+   Modal
+   ========================================================= */
+
+function showModal(content) {
+    modalRoot.innerHTML = `
+        <div class="modal-backdrop" id="modalBackdrop">
+            <div
+                class="modal"
+                role="dialog"
+                aria-modal="true"
+            >
+                ${content}
+            </div>
+        </div>
+    `;
+
+    $("#modalBackdrop").addEventListener("click", event => {
+        if (event.target.id === "modalBackdrop") {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", handleModalEscape);
+}
+
+function handleModalEscape(event) {
+    if (event.key === "Escape" && modalRoot.innerHTML) {
+        closeModal();
+    }
+}
+
+function closeModal() {
+    modalRoot.innerHTML = "";
+    document.removeEventListener("keydown", handleModalEscape);
+}
+
+/* =========================================================
+   Startup / persistence
+   ========================================================= */
+
+function startup() {
+    projects = loadProjects();
+
+    const lastProjectId = localStorage.getItem(ACTIVE_PROJECT_KEY);
+
+    if (lastProjectId) {
+        const lastProject = projects.find(
+            project => project.id === lastProjectId
+        );
+
+        if (lastProject) {
+            currentProject = lastProject;
+            selectedSceneId = lastProject.activeSceneId ||
+                lastProject.scenes[0]?.id;
+
+            if (!lastProject.scenes.some(
+                scene => scene.id === selectedSceneId
+            )) {
+                selectedSceneId = lastProject.scenes[0].id;
+            }
+
+            renderEditor();
+            return;
+        }
+    }
+
+    renderWelcome();
+}
+
+window.addEventListener("beforeunload", () => {
+    if (!currentProject) return;
+
+    clearTimeout(saveTimer);
+
+    const editor = $("#mainEditor");
+    const scene = getCurrentScene();
+
+    if (editor && scene) {
+        scene.text = editor.value;
+        scene.updatedAt = nowISO();
+    }
+
+    persistProjects(false);
+});
+
+window.addEventListener("storage", event => {
+    if (event.key !== STORAGE_KEY || currentProject) return;
+
+    projects = loadProjects();
+    renderWelcome();
+});
+
+startup();
+</script>
+
+</body>
+</html>
